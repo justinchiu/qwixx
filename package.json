@@ -1,0 +1,17 @@
+{
+  "name": "qwixx",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@qwixx/server & npm run dev --workspace=@qwixx/client",
+    "dev:server": "npm run dev --workspace=@qwixx/server",
+    "dev:client": "npm run dev --workspace=@qwixx/client",
+    "build": "npm run build --workspaces",
+    "build:shared": "npm run build --workspace=@qwixx/shared",
+    "build:server": "npm run build --workspace=@qwixx/server",
+    "build:client": "npm run build --workspace=@qwixx/client"
+  }
+}
