@@ -64,7 +64,7 @@ export function GameBoard() {
 
   const hasActedWhitePhase = gameState.whitePhaseActions[playerId];
   const canPass = gameState.phase === 'white-phase' && !hasActedWhitePhase;
-  const canEndTurn = isMyTurn && (gameState.phase === 'white-phase' || gameState.phase === 'color-phase');
+  const canEndTurn = isMyTurn && gameState.phase === 'color-phase';
 
   // Game over screen
   if (gameState.phase === 'ended') {
@@ -103,7 +103,12 @@ export function GameBoard() {
           {gameState.phase === 'rolling' && (
             isMyTurn ? 'Your turn - Roll the dice!' : `Waiting for ${activePlayer.name} to roll...`
           )}
-          {gameState.phase === 'white-phase' && 'White Phase - All players can mark'}
+          {gameState.phase === 'white-phase' && (
+            <>
+              White Phase - {hasActedWhitePhase ? 'Waiting for others...' : 'Mark a number or Pass'}
+              {' '}({Object.keys(gameState.whitePhaseActions).length}/{gameState.players.length} done)
+            </>
+          )}
           {gameState.phase === 'color-phase' && (
             isMyTurn ? 'Color Phase - Your turn to mark or pass' : `Color Phase - ${activePlayer.name}'s turn`
           )}
@@ -154,7 +159,7 @@ export function GameBoard() {
             )}
             {canEndTurn && (
               <button onClick={endTurn} className="end-turn-button">
-                {gameState.phase === 'white-phase' ? 'End White Phase' : 'End Turn'}
+                End Turn
               </button>
             )}
           </div>

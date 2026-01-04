@@ -12,6 +12,10 @@
     "build": "npm run build --workspaces",
     "build:shared": "npm run build --workspace=@qwixx/shared",
     "build:server": "npm run build --workspace=@qwixx/server",
-    "build:client": "npm run build --workspace=@qwixx/client"
+    "build:client": "npm run build --workspace=@qwixx/client",
+    "start": "NODE_ENV=production node packages/server/dist/index.js"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

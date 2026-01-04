@@ -25,6 +25,16 @@ import {
 type TypedSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
 type TypedServer = Server<ClientToServerEvents, ServerToClientEvents>;
 
+function checkWhitePhaseComplete(io: TypedServer, room: ReturnType<typeof getRoom>) {
+  if (!room || room.state.phase !== 'white-phase') return;
+
+  const allActed = room.state.players.every(p => room.state.whitePhaseActions[p.id]);
+  if (allActed) {
+    room.state.phase = 'color-phase';
+    io.to(room.code).emit('state-updated', room.state);
+  }
+}
+
 export function setupHandlers(io: TypedServer) {
   io.on('connection', (socket: TypedSocket) => {
     console.log('Client connected:', socket.id);
@@ -33,6 +43,7 @@ export function setupHandlers(io: TypedServer) {
       const { room, playerId } = createRoom(playerName, socket.id);
       socket.join(room.code);
       socket.emit('room-created', room.code, playerId);
+      socket.emit('state-updated', room.state);
       console.log(`Room ${room.code} created by ${playerName}`);
     });
 
@@ -143,6 +154,11 @@ export function setupHandlers(io: TypedServer) {
         room.state.whitePhaseActions[playerId!] = true;
         checkAndLockRow(room.state, color);
 
+        // Check if all players have acted - auto transition to color phase
+        io.to(room.code).emit('state-updated', room.state);
+        checkWhitePhaseComplete(io, room);
+        return;
+
       } else if (room.state.phase === 'color-phase') {
         // Only active player can mark during color phase
         if (!isActivePlayer) {
@@ -206,6 +222,7 @@ export function setupHandlers(io: TypedServer) {
 
       room.state.whitePhaseActions[playerId!] = true;
       io.to(room.code).emit('state-updated', room.state);
+      checkWhitePhaseComplete(io, room);
     });
 
     socket.on('end-turn', () => {
@@ -223,19 +240,12 @@ export function setupHandlers(io: TypedServer) {
         return;
       }
 
-      if (room.state.phase !== 'white-phase' && room.state.phase !== 'color-phase') {
+      if (room.state.phase !== 'color-phase') {
         socket.emit('error', 'Cannot end turn now');
         return;
       }
 
-      // If still in white phase, move to color phase first
-      if (room.state.phase === 'white-phase') {
-        room.state.phase = 'color-phase';
-        io.to(room.code).emit('state-updated', room.state);
-        return;
-      }
-
-      // In color phase - check if active player needs a penalty
+      // Check if active player needs a penalty
       const activePlayerMarkedWhite = room.state.whitePhaseActions[playerId!];
       const activePlayerMarkedColor = room.state.colorPhaseAction;
 
