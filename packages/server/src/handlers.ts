@@ -64,6 +64,28 @@ export function setupHandlers(io: TypedServer) {
       console.log(`${playerName} joined room ${room.code}`);
     });
 
+    socket.on('leave-room', () => {
+      const room = getRoomBySocketId(socket.id);
+      if (!room) {
+        return;
+      }
+
+      const playerId = getPlayerIdBySocketId(room, socket.id);
+      if (!playerId) {
+        return;
+      }
+
+      socket.leave(room.code);
+      socket.emit('room-left');
+
+      const updatedRoom = leaveRoom(room.code, playerId);
+      if (updatedRoom) {
+        io.to(room.code).emit('player-left', playerId);
+        io.to(room.code).emit('state-updated', updatedRoom.state);
+      }
+      console.log(`Player left room ${room.code}`);
+    });
+
     socket.on('start-game', () => {
       const room = getRoomBySocketId(socket.id);
       if (!room) {

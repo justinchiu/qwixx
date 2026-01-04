@@ -131,8 +131,17 @@ body {
 }
 
 .start-button {
-  background: #00a896 !important;
+  background: linear-gradient(135deg, #00a896, #00c9b1) !important;
   margin-top: 20px;
+}
+
+.leave-button {
+  background: linear-gradient(135deg, #666, #888) !important;
+  margin-top: 10px;
+}
+
+.leave-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #888, #999) !important;
 }
 
 .waiting-message {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useGame } from '../context/GameContext';
 
 export function Lobby() {
-  const { connected, roomCode, gameState, playerId, createRoom, joinRoom, startGame, error, clearError } = useGame();
+  const { connected, roomCode, gameState, playerId, createRoom, joinRoom, leaveRoom, startGame, error, clearError } = useGame();
   const [playerName, setPlayerName] = useState('');
   const [joinCode, setJoinCode] = useState('');
   const [mode, setMode] = useState<'initial' | 'create' | 'join'>('initial');
@@ -41,6 +41,9 @@ export function Lobby() {
           <p className="waiting-message">Waiting for more players...</p>
         )}
         {!isHost && <p className="waiting-message">Waiting for host to start...</p>}
+        <button onClick={leaveRoom} className="leave-button">
+          {isHost ? 'Cancel Game' : 'Leave Room'}
+        </button>
       </div>
     );
   }

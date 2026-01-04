@@ -21,6 +21,7 @@ interface GameContextType {
   scores: Record<string, number> | null;
   createRoom: (playerName: string) => void;
   joinRoom: (roomCode: string, playerName: string) => void;
+  leaveRoom: () => void;
   startGame: () => void;
   rollDice: () => void;
   markNumber: (color: Color, number: number) => void;
@@ -66,6 +67,13 @@ export function GameProvider({
       // State update will come via state-updated
     });
 
+    socket.on('room-left', () => {
+      setPlayerId(null);
+      setRoomCode(null);
+      setGameState(null);
+      setScores(null);
+    });
+
     socket.on('game-started', (state) => {
       setGameState(state);
       setRoomCode(state.roomCode);
@@ -92,6 +100,7 @@ export function GameProvider({
     return () => {
       socket.off('room-created');
       socket.off('room-joined');
+      socket.off('room-left');
       socket.off('player-joined');
       socket.off('player-left');
       socket.off('game-started');
@@ -115,6 +124,10 @@ export function GameProvider({
     },
     [socket]
   );
+
+  const leaveRoom = useCallback(() => {
+    socket?.emit('leave-room');
+  }, [socket]);
 
   const startGame = useCallback(() => {
     socket?.emit('start-game');
@@ -155,6 +168,7 @@ export function GameProvider({
         scores,
         createRoom,
         joinRoom,
+        leaveRoom,
         startGame,
         rollDice,
         markNumber,
