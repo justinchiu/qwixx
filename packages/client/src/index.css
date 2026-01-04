@@ -181,6 +181,191 @@ body {
   .game-content {
     grid-template-columns: 1fr;
   }
+
+  .side-panel {
+    order: -1;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 520px) {
+  .app {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .lobby {
+    padding: 20px;
+  }
+
+  .lobby h1 {
+    font-size: 2rem;
+  }
+
+  .game-header {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .game-header h2 {
+    font-size: 1rem;
+  }
+
+  .phase-indicator {
+    font-size: 0.9rem;
+  }
+
+  .game-content {
+    gap: 10px;
+  }
+
+  .sheet-section {
+    padding: 12px;
+  }
+
+  .sheet-section h3 {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+
+  .score-sheet {
+    gap: 6px;
+  }
+
+  .score-row {
+    gap: 3px;
+  }
+
+  .score-cell {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+  }
+
+  .score-cell .mark {
+    font-size: 1rem;
+  }
+
+  .lock-cell {
+    width: 24px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+
+  .penalties {
+    margin-top: 12px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .penalty-box {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+
+  .penalty-value {
+    font-size: 0.8rem;
+    margin-left: 5px;
+  }
+
+  .current-score {
+    font-size: 1.1rem;
+    margin-top: 10px;
+  }
+
+  .side-panel {
+    gap: 10px;
+  }
+
+  .dice-display {
+    padding: 12px;
+  }
+
+  .dice-row {
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .dice {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  .sum {
+    font-size: 1rem;
+  }
+
+  .dice-sums {
+    font-size: 0.8rem;
+  }
+
+  .dice-sums .sum {
+    font-size: 0.8rem;
+    padding: 3px 6px;
+  }
+
+  .action-buttons button {
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  .player-list-game {
+    padding: 12px;
+  }
+
+  .player-list-game h3 {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+
+  .player-list-game li {
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+
+  .player-name {
+    font-size: 0.9rem;
+  }
+
+  .player-score {
+    font-size: 0.8rem;
+  }
+
+  .error-toast {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    transform: none;
+    font-size: 0.9rem;
+  }
+
+  .game-over {
+    padding: 20px;
+  }
+
+  .game-over h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+
+  .final-score {
+    padding: 10px;
+  }
+
+  .final-score .rank {
+    font-size: 1.2rem;
+  }
+
+  .final-score .name {
+    font-size: 0.9rem;
+  }
+
+  .final-score .score {
+    font-size: 1rem;
+  }
 }
 
 .sheet-section {
