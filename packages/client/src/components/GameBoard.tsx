@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { ScoreRow } from './ScoreRow';
 import { DiceDisplay } from './DiceDisplay';
@@ -36,6 +37,14 @@ export function GameBoard() {
   const isMyTurn = activePlayer.id === playerId;
   const sheet = currentPlayer.sheet;
 
+  // Pending selection state - allows undo before confirming
+  const [pendingSelection, setPendingSelection] = useState<{ color: Color; number: number } | null>(null);
+
+  // Clear pending selection when phase changes
+  useEffect(() => {
+    setPendingSelection(null);
+  }, [gameState.phase, gameState.dice]);
+
   // Calculate available numbers for each row
   const getAvailableNumbers = (color: Color): number[] => {
     if (!gameState.dice) return [];
@@ -60,7 +69,23 @@ export function GameBoard() {
   };
 
   const handleMark = (color: Color, number: number) => {
-    markNumber(color, number);
+    // Toggle off if clicking the same selection
+    if (pendingSelection?.color === color && pendingSelection?.number === number) {
+      setPendingSelection(null);
+    } else {
+      setPendingSelection({ color, number });
+    }
+  };
+
+  const confirmSelection = () => {
+    if (pendingSelection) {
+      markNumber(pendingSelection.color, pendingSelection.number);
+      setPendingSelection(null);
+    }
+  };
+
+  const cancelSelection = () => {
+    setPendingSelection(null);
   };
 
   const hasActedWhitePhase = gameState.whitePhaseActions[playerId];
@@ -128,6 +153,7 @@ export function GameBoard() {
                 availableNumbers={getAvailableNumbers(color)}
                 onMark={(num) => handleMark(color, num)}
                 globallyLocked={gameState.lockedRows.includes(color)}
+                pendingNumber={pendingSelection?.color === color ? pendingSelection.number : null}
               />
             ))}
           </div>
@@ -153,12 +179,27 @@ export function GameBoard() {
                 Roll Dice
               </button>
             )}
-            {canPass && (
+            {pendingSelection && (
+              <div className="pending-selection">
+                <span className="pending-label">
+                  Selected: <strong className={`color-${pendingSelection.color}`}>{pendingSelection.number}</strong> in {pendingSelection.color}
+                </span>
+                <div className="pending-buttons">
+                  <button onClick={confirmSelection} className="confirm-button">
+                    Confirm
+                  </button>
+                  <button onClick={cancelSelection} className="cancel-button">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+            {canPass && !pendingSelection && (
               <button onClick={passWhitePhase} className="pass-button">
                 Pass (Don't Mark)
               </button>
             )}
-            {canEndTurn && (
+            {canEndTurn && !pendingSelection && (
               <button onClick={endTurn} className="end-turn-button">
                 End Turn
               </button>

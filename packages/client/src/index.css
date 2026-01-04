@@ -481,6 +481,26 @@ body {
   opacity: 0.4;
 }
 
+.score-cell.pending {
+  animation: pending-pulse 0.5s infinite;
+  box-shadow: 0 0 15px #fff, 0 0 25px currentColor;
+  transform: scale(1.1);
+}
+
+.score-cell .pending-mark {
+  color: #fff;
+  text-shadow: 0 0 5px #000;
+}
+
+@keyframes pending-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px #fff, 0 0 25px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 20px #fff, 0 0 35px currentColor;
+  }
+}
+
 .score-cell .mark {
   position: absolute;
   top: 50%;
@@ -710,6 +730,51 @@ body {
   background: linear-gradient(135deg, #008f7f, #00a896);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 168, 150, 0.4);
+}
+
+/* Pending Selection UI */
+.pending-selection {
+  background: rgba(15, 52, 96, 0.9);
+  padding: 15px;
+  border-radius: 12px;
+  border: 2px solid #f9b208;
+  text-align: center;
+}
+
+.pending-label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.pending-label .color-red { color: #e94560; }
+.pending-label .color-yellow { color: #f9b208; }
+.pending-label .color-green { color: #00a896; }
+.pending-label .color-blue { color: #3d5af1; }
+
+.pending-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.confirm-button {
+  flex: 1;
+  background: linear-gradient(135deg, #00a896, #00c9b1) !important;
+  color: #fff;
+}
+
+.confirm-button:hover {
+  background: linear-gradient(135deg, #008f7f, #00a896) !important;
+}
+
+.cancel-button {
+  flex: 1;
+  background: linear-gradient(135deg, #666, #888) !important;
+  color: #fff;
+}
+
+.cancel-button:hover {
+  background: linear-gradient(135deg, #888, #999) !important;
 }
 
 /* Player List in Game */
