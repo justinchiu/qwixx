@@ -30,7 +30,10 @@ app.get('/health', (_req, res) => {
 
 // Serve static files in production
 if (isProduction) {
+  // __dirname is /app/packages/server/dist in Docker
+  // client dist is at /app/packages/client/dist
   const clientDist = path.join(__dirname, '../../client/dist');
+  console.log('Serving static files from:', clientDist);
   app.use(express.static(clientDist));
   app.get('*', (_req, res) => {
     res.sendFile(path.join(clientDist, 'index.html'));
