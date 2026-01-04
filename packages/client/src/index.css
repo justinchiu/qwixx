@@ -239,7 +239,12 @@ body {
   }
 
   .sheet-section {
-    padding: 12px;
+    padding: 10px;
+    overflow-x: auto;
+  }
+
+  .score-sheet {
+    min-width: fit-content;
   }
 
   .sheet-section h3 {
@@ -252,24 +257,24 @@ body {
   }
 
   .score-row {
-    gap: 3px;
+    gap: 2px;
   }
 
   .score-cell {
-    width: 28px;
-    height: 28px;
-    font-size: 0.75rem;
+    width: 24px;
+    height: 24px;
+    font-size: 0.65rem;
     border-radius: 4px;
   }
 
   .score-cell .mark {
-    font-size: 1rem;
+    font-size: 0.85rem;
   }
 
   .lock-cell {
-    width: 24px;
-    height: 28px;
-    font-size: 0.9rem;
+    width: 20px;
+    height: 24px;
+    font-size: 0.8rem;
   }
 
   .penalties {
@@ -384,6 +389,36 @@ body {
 
   .final-score .score {
     font-size: 1rem;
+  }
+}
+
+/* Extra small screens (under 360px) */
+@media (max-width: 360px) {
+  .score-row {
+    gap: 1px;
+  }
+
+  .score-cell {
+    width: 20px;
+    height: 20px;
+    font-size: 0.55rem;
+    border-radius: 3px;
+  }
+
+  .score-cell .mark {
+    font-size: 0.75rem;
+  }
+
+  .lock-cell {
+    width: 16px;
+    height: 20px;
+    font-size: 0.7rem;
+  }
+
+  .dice {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
   }
 }
 
