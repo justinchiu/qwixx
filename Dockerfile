@@ -14,8 +14,10 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Build all packages
-RUN npm run build
+# Build packages in order (shared must be first)
+RUN npm run build:shared
+RUN npm run build:server
+RUN npm run build:client
 
 # Expose port
 EXPOSE 8080
