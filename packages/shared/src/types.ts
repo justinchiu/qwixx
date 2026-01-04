@@ -71,6 +71,7 @@ export const SCORING: Record<number, number> = {
 export interface ClientToServerEvents {
   'create-room': (playerName: string) => void;
   'join-room': (roomCode: string, playerName: string) => void;
+  'rejoin-room': (roomCode: string, playerId: string) => void;
   'leave-room': () => void;
   'start-game': () => void;
   'roll-dice': () => void;
@@ -82,6 +83,7 @@ export interface ClientToServerEvents {
 export interface ServerToClientEvents {
   'room-created': (roomCode: string, playerId: string) => void;
   'room-joined': (playerId: string) => void;
+  'room-rejoined': (state: GameState) => void;
   'room-left': () => void;
   'player-joined': (player: Player) => void;
   'player-left': (playerId: string) => void;

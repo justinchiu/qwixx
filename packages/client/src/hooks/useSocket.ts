@@ -12,15 +12,26 @@ export function useSocket() {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    const socket: TypedSocket = io(SOCKET_URL as string);
+    const socket: TypedSocket = io(SOCKET_URL as string, {
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+    });
     socketRef.current = socket;
 
     socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
       setConnected(true);
     });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (reason) => {
+      console.log('Socket disconnected:', reason);
       setConnected(false);
+    });
+
+    socket.io.on('reconnect', (attempt: number) => {
+      console.log('Socket reconnected after', attempt, 'attempts');
     });
 
     return () => {

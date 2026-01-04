@@ -64,6 +64,27 @@ export function setupHandlers(io: TypedServer) {
       console.log(`${playerName} joined room ${room.code}`);
     });
 
+    socket.on('rejoin-room', (roomCode: string, odlPlayerId: string) => {
+      const room = getRoom(roomCode);
+      if (!room) {
+        socket.emit('error', 'Room no longer exists');
+        return;
+      }
+
+      // Check if player exists in room
+      const player = room.state.players.find((p) => p.id === odlPlayerId);
+      if (!player) {
+        socket.emit('error', 'Player no longer in room');
+        return;
+      }
+
+      // Update socket mapping
+      room.playerSockets.set(odlPlayerId, socket.id);
+      socket.join(room.code);
+      socket.emit('room-rejoined', room.state);
+      console.log(`${player.name} rejoined room ${room.code}`);
+    });
+
     socket.on('leave-room', () => {
       const room = getRoomBySocketId(socket.id);
       if (!room) {

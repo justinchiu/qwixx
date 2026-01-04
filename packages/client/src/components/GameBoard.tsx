@@ -13,6 +13,7 @@ export function GameBoard() {
   const {
     gameState,
     playerId,
+    connected,
     rollDice,
     markNumber,
     passWhitePhase,

@@ -14,6 +14,13 @@ export function Lobby() {
     return <div className="lobby">Connecting to server...</div>;
   }
 
+  // Check if we're trying to rejoin
+  const storedRoomCode = sessionStorage.getItem('qwixx-roomCode');
+  const storedPlayerId = sessionStorage.getItem('qwixx-playerId');
+  if (storedRoomCode && storedPlayerId && !gameState && !error) {
+    return <div className="lobby">Reconnecting to game...</div>;
+  }
+
   // In waiting room
   if (roomCode && gameState?.phase === 'waiting') {
     return (

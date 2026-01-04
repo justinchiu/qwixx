@@ -41,11 +41,16 @@ export function GameProvider({
   socket: TypedSocket | null;
   connected: boolean;
 }) {
-  const [playerId, setPlayerId] = useState<string | null>(null);
-  const [roomCode, setRoomCode] = useState<string | null>(null);
+  const [playerId, setPlayerId] = useState<string | null>(() => {
+    return sessionStorage.getItem('qwixx-playerId');
+  });
+  const [roomCode, setRoomCode] = useState<string | null>(() => {
+    return sessionStorage.getItem('qwixx-roomCode');
+  });
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [scores, setScores] = useState<Record<string, number> | null>(null);
+  const [hasTriedRejoin, setHasTriedRejoin] = useState(false);
 
   useEffect(() => {
     if (!socket) return;
@@ -53,10 +58,21 @@ export function GameProvider({
     socket.on('room-created', (code, id) => {
       setRoomCode(code);
       setPlayerId(id);
+      sessionStorage.setItem('qwixx-roomCode', code);
+      sessionStorage.setItem('qwixx-playerId', id);
     });
 
     socket.on('room-joined', (id) => {
       setPlayerId(id);
+      sessionStorage.setItem('qwixx-playerId', id);
+      // roomCode is set via state-updated
+    });
+
+    socket.on('room-rejoined', (state) => {
+      setGameState(state);
+      setRoomCode(state.roomCode);
+      setError(null);
+      console.log('Successfully rejoined room');
     });
 
     socket.on('player-joined', (_player) => {
@@ -72,6 +88,8 @@ export function GameProvider({
       setRoomCode(null);
       setGameState(null);
       setScores(null);
+      sessionStorage.removeItem('qwixx-roomCode');
+      sessionStorage.removeItem('qwixx-playerId');
     });
 
     socket.on('game-started', (state) => {
@@ -86,6 +104,7 @@ export function GameProvider({
     socket.on('state-updated', (state) => {
       setGameState(state);
       setRoomCode(state.roomCode);
+      sessionStorage.setItem('qwixx-roomCode', state.roomCode);
     });
 
     socket.on('game-ended', (state, finalScores) => {
@@ -95,11 +114,21 @@ export function GameProvider({
 
     socket.on('error', (message) => {
       setError(message);
+      // If room no longer exists or player not found, clear session
+      if (message.includes('no longer exists') || message.includes('no longer in room')) {
+        setPlayerId(null);
+        setRoomCode(null);
+        setGameState(null);
+        setScores(null);
+        sessionStorage.removeItem('qwixx-roomCode');
+        sessionStorage.removeItem('qwixx-playerId');
+      }
     });
 
     return () => {
       socket.off('room-created');
       socket.off('room-joined');
+      socket.off('room-rejoined');
       socket.off('room-left');
       socket.off('player-joined');
       socket.off('player-left');
@@ -110,6 +139,20 @@ export function GameProvider({
       socket.off('error');
     };
   }, [socket]);
+
+  // Try to rejoin room on connect if we have stored session
+  useEffect(() => {
+    if (!socket || !connected || hasTriedRejoin) return;
+
+    const storedRoomCode = sessionStorage.getItem('qwixx-roomCode');
+    const storedPlayerId = sessionStorage.getItem('qwixx-playerId');
+
+    if (storedRoomCode && storedPlayerId && !gameState) {
+      console.log('Attempting to rejoin room:', storedRoomCode);
+      socket.emit('rejoin-room', storedRoomCode, storedPlayerId);
+      setHasTriedRejoin(true);
+    }
+  }, [socket, connected, hasTriedRejoin, gameState]);
 
   const createRoom = useCallback(
     (playerName: string) => {
